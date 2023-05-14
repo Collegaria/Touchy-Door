@@ -1,0 +1,20 @@
+{
+    "delay_time": 2, 
+    "NTFY": {
+      "ntfy_title": "Doorbell Alert", 
+      "ntfy_tags": "doorbell,alert", 
+      "ntfy_priority": "normal", 
+      "ntfy_endpoint": "https://ntfy.sh/mytopic"
+    }, 
+    "API": {
+      "api_key": "your_api_key", 
+      "device_id": "your_device_id"
+    }, 
+    "PinOut": {
+      "buzzer_pin": "2", 
+      "trig_pin": "0", 
+      "echo_pin": "1", 
+      "green_led_pin": "3"
+    }, 
+    "distance_threshold": 30
+  }
