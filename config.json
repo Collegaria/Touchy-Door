@@ -11,9 +11,8 @@
       "device_id": "your_device_id"
     }, 
     "PinOut": {
-      "buzzer_pin": "2", 
-      "trig_pin": "0", 
-      "echo_pin": "1", 
+      "buzzer_pin": "0", 
+      "trig_pin": "A0",
       "green_led_pin": "3"
     }, 
     "distance_threshold": 30

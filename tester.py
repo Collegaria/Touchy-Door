@@ -16,6 +16,7 @@ def check_config(config_filename):
 
 def main():
     print(check_config("config.json"))
+    ntfy_data["ntfy_tags"]
 
 
 if __name__ == "__main__":
