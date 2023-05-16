@@ -7,8 +7,8 @@
       "ntfy_endpoint": "https://ntfy.sh/mytopic"
     }, 
     "API": {
-      "api_key": "your_api_key", 
-      "device_id": "your_device_id"
+      "api_key": "c3602a61-5a8f-4c13-bcc6-699473cf5faa", 
+      "device_id": "BOLT8024811"
     }, 
     "PinOut": {
       "buzzer_pin": "0", 

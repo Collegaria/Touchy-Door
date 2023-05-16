@@ -1,23 +1,26 @@
-import json
-from modules import configurator
+from boltiot import Bolt
+import math
+import time
 
-def check_config(config_filename):
-    configured = configurator.create_config(config_filename)
-    if not configured:
-        return "Creating Config"
-    else:
-        with open(config_filename, 'r') as f:
-            data = json.load(f)
-        device = data['API']
-        if device["api_key"] == "your_api_key" or device["device_id"] == "your_device_id":
-            return "Default API key and device ID detected. Please update the config.json file with your API key and device ID."
-        else:
-            return "Configuration file is valid."
+api_key = "c3602a61-5a8f-4c13-bcc6-699473cf5faa"
+device_id = "BOLT8024811"
+mybolt = Bolt(api_key, device_id)
 
-def main():
-    print(check_config("config.json"))
-    ntfy_data["ntfy_tags"]
+frequency = 440  # 440 Hz is middle A
+duration = 500  # 500 ms = 0.5 seconds
 
+hit_limit = 20  # Maximum hits per minute
+hit_interval = 60 / hit_limit  # Hit interval in seconds
 
-if __name__ == "__main__":
-    main()
+def play_doorbell(buzzer_pin, mybolt):
+    # Generate the sine wave samples
+    num_samples = int(duration * 1000 / 2)  # Convert duration from ms to us and divide by 2 for positive/negative cycle
+    samples = [int(127 + 127 * math.sin(2 * math.pi * frequency * i / 1000000)) for i in range(num_samples)]
+    # Output the sine wave to the buzzer
+    for sample in samples:
+        mybolt.analogWrite(buzzer_pin, sample)
+        time.sleep(1e-6)  # Wait for the next sample time
+        time.sleep(hit_interval)  # Wait for the hit interval
+
+#play_doorbell(0, mybolt)
+print(mybolt.isOnline())

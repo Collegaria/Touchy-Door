@@ -21,34 +21,6 @@ def check_config(config_filename):
 
 
 # Define the Bolt IoT module API key and device ID
-
-API_KEY = "your_api_key"
-DEVICE_ID = "your_device_id"
-
-
-
-# Define the ultrasonic sensor pins
-trig_pin = "0"
-echo_pin = "1"
-
-# Define the buzzer
-buzzer_pin = "2"
-
-# Define the green LED pin
-green_led_pin = "3"
-
-# Define the distance threshold
-distance_threshold = 30
-
-# Define the delay time
-delay_time = 2
-
-# Define the ntfy API endpoint and token
-ntfy_endpoint = "https://ntfy.sh/mytopic"
-ntfy_title = "Doorbell Alert"
-ntfy_priority = "normal"
-ntfy_tags = "doorbell,alert"
-
 # Define the sine wave parameters
 frequency = 440  # 440 Hz is middle A
 duration = 500  # 500 ms = 0.5 seconds
@@ -72,7 +44,7 @@ def play_doorbell(buzzer_pin, mybolt):
         time.sleep(1e-6)  # Wait for the next sample time
 
 # Define a function to send an alert notification
-def send_alert(ntfy_endpoint, ntfy_title, ntfy_priority, ntfy_tags, mybolt):
+def send_alert(ntfy_endpoint, ntfy_title, ntfy_priority, ntfy_tags, mybolt, green_led_pin):
     global num_instances_triggered
     mybolt.digitalWrite(green_led_pin, "HIGH")
     # Increment the number of instances triggered
@@ -101,8 +73,9 @@ def main():
         with open("config.json", "r") as f:
             config_data = json.load(f)
 
-        # Access the variables from the config_data dictionary
         delay_time = config_data["delay_time"]
+        hit_interval = 60 / 20  # Hit interval for 20 hits per minute
+        
         
         ntfy_data = config_data["NTFY"] #!
         ntfy_title = ntfy_data["ntfy_title"]
@@ -123,6 +96,15 @@ def main():
         distance_threshold = config_data["distance_threshold"] #!
 
         while True:
+            # Check hit limit
+            current_time = time.time()
+            elapsed_time = current_time - last_hit_time
+            if elapsed_time < hit_interval:
+                time.sleep(hit_interval - elapsed_time)
+                continue
+            
+            last_hit_time = current_time
+            
             distance = read_light_intensity(ldr_pin, mybolt)
             if distance < distance_threshold:
                 mybolt.digitalWrite(green_led_pin, "HIGH")
@@ -130,7 +112,7 @@ def main():
                 distance = read_light_intensity(ldr_pin, mybolt)
                 if distance < distance_threshold:
                     play_doorbell(buzzer_pin, mybolt)
-                    send_alert(ntfy_endpoint, ntfy_title, ntfy_priority, ntfy_tags, mybolt)
+                    send_alert(ntfy_endpoint, ntfy_title, ntfy_priority, ntfy_tags, mybolt, green_led_pin)
             else:
                 mybolt.digitalWrite(buzzer_pin, "LOW")
                 mybolt.digitalWrite(green_led_pin, "LOW")
